@@ -23,7 +23,3 @@ Este não é um simples quadro estático. O arquivo HTML foi programado para fun
 * **Tailwind CSS:** Estilização moderna e responsiva direto no arquivo.
 * **JavaScript (Vanilla):** Lógica do modo de apresentação, calculadora e alternância de temas.
 * **FontAwesome:** Biblioteca de ícones.
-
-🔗 **[Insira aqui o seu link do GitHub Pages, ex: https://seunome.github.io/investteen-canvas]**
-
-Alternativamente, você pode clonar este repositório, baixar o arquivo `index.html` e dar um duplo clique para abri-lo localmente no seu navegador.
