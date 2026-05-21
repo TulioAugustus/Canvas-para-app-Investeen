@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investeen - Lean Canvas Executivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        title: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            darkBg: '#030712',
+                            cardDark: '#0b1329',
+                            purple: '#a855f7',
+                            green: '#10b981',
+                            greenGlow: '#059669',
+                            slateAccent: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos adicionais para impressão e PDF em A4 Paisagem */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-canvas {
+                width: 100% !important;
+                height: auto !important;
+                grid-template-columns: repeat(5, 1fr) !important;
+                background: white !important;
+                gap: 4px !important;
+            }
+            .print-card {
+                background: white !important;
+                color: black !important;
+                border: 2px solid #000 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .print-card h3, .print-card p, .print-card li, .print-card i, .print-card div {
+                color: black !important;
+            }
+            .canvas-grid {
+                display: grid !important;
+                grid-template-columns: repeat(5, 1fr) !important;
+                grid-template-rows: 1.5fr 1.5fr 1fr !important;
+            }
+        }
+        
+        .theme-transition {
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Efeito de destaque no modo Pitch */
+        .pitch-highlight {
+            position: relative;
+            z-index: 50;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.55);
+            border-color: #a855f7 !important;
+            transform: scale(1.03);
+        }
+
+        .dark .pitch-highlight {
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.45);
+            border-color: #10b981 !important;
+        }
+
+        .overlay-dim {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 7, 18, 0.85);
+            z-index: 40;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-brand-darkBg text-slate-100 font-sans theme-transition min-h-screen flex flex-col p-4 md:p-8 dark:bg-brand-darkBg dark:text-slate-100 bg-slate-50 text-slate-800">
+
+    <div id="pitch-overlay" class="overlay-dim opacity-0 hidden"></div>
+
+    <header class="no-print max-w-7xl mx-auto w-full mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-6">
+        <div>
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="bg-brand-purple/20 text-brand-purple dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
+                    UFBA • MAT220 • IHAC
+                </span>
+                <span class="bg-brand-green/20 text-brand-green text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                    <i class="fa-solid fa-square-poll-vertical"></i> Pesquisa de Campo Validada
+                </span>
+                <span id="perspective-badge" class="bg-blue-500/20 text-blue-600 dark:text-blue-300 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                    Foco: Geral
+                </span>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-title font-extrabold mt-2 text-slate-900 dark:text-white tracking-tight">
+                Invest<span class="text-brand-green">teen</span> <span class="text-slate-400 dark:text-slate-600 font-normal">Lean Canvas</span>
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 text-base mt-1 font-medium">
+                Modelo de negócios otimizado para captação, rodadas de pitch e propostas escolares.
+            </p>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-3">
+            
+            <div class="flex bg-slate-200 dark:bg-slate-800 p-1 rounded-xl border border-slate-300 dark:border-slate-700 shadow-inner">
+                <button onclick="setPerspective('all')" id="btn-p-all" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm">
+                    Geral
+                </button>
+                <button onclick="setPerspective('b2b')" id="btn-p-b2b" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    Privado (B2B)
+                </button>
+                <button onclick="setPerspective('b2g')" id="btn-p-b2g" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    Público (B2G)
+                </button>
+            </div>
+
+            <button onclick="togglePitchMode()" id="btn-pitch" class="bg-brand-purple hover:bg-purple-600 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 font-semibold transition-all shadow-md shadow-brand-purple/20">
+                <i class="fa-solid fa-play"></i>
+                <span>Modo Apresentação (Pitch)</span>
+            </button>
+            
+            <button onclick="toggleTheme()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl flex items-center gap-2 font-semibold transition-all shadow-sm">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+                <span id="theme-text">Modo Escuro</span>
+            </button>
+
+            <button onclick="window.print()" class="bg-brand-green hover:bg-brand-greenGlow text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition-all shadow-md shadow-brand-green/20">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Exportar PDF/Proposta</span>
+            </button>
+        </div>
+    </header>
+
+    <div id="pitch-controls" class="no-print max-w-7xl mx-auto w-full mb-6 bg-gradient-to-r from-brand-purple/20 to-brand-green/20 border border-brand-purple/30 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4 hidden">
+        <div class="flex items-center gap-3">
+            <span class="flex h-3 w-3 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-green opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-green"></span>
+            </span>
+            <div>
+                <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    Apresentação Investteen Ativa
+                </h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Navegue usando os botões ou as <strong>setas esquerda/direita</strong> do seu teclado para destacar cada bloco.
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="prevPitchStep()" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Anterior
+            </button>
+            <span id="pitch-step-indicator" class="text-sm font-bold bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-lg">
+                1 / 9: Problema
+            </span>
+            <button onclick="nextPitchStep()" class="bg-brand-green hover:bg-brand-greenGlow text-white px-5 py-2 rounded-xl text-sm font-bold transition-all">
+                Próximo <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+            <button onclick="exitPitchMode()" class="text-rose-500 hover:text-rose-600 font-bold text-sm px-3 py-2">
+                Sair
+            </button>
+        </div>
+    </div>
+
+    <section class="no-print max-w-7xl mx-auto w-full mb-6 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm transition-all">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div class="max-w-xl">
+                <h3 class="text-xl font-title font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-brand-green"></i> Simulador de Engajamento Escolar
+                </h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    Insira o volume de estudantes da escola e veja a projeção de adoção simulada em tempo real.
+                </p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nº de Alunos Ativos</label>
+                    <input type="number" id="input-students" oninput="calculateImpact()" value="350" class="w-full sm:w-36 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white font-bold text-center focus:ring-2 focus:ring-brand-green outline-none" min="10" max="100000">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800/50">
+                    <div class="px-2">
+                        <span class="block text-[10px] uppercase font-bold text-slate-400">Engajados por Games</span>
+                        <span id="val-engaged" class="text-xl font-extrabold text-brand-green">315</span>
+                        <span class="text-xs text-slate-400 block mt-0.5">~90% de engajamento</span>
+                    </div>
+                    <div class="px-2 border-l border-slate-200 dark:border-slate-800">
+                        <span class="block text-[10px] uppercase font-bold text-slate-400">Prática Saudável/Ano</span>
+                        <span id="val-hours" class="text-xl font-extrabold text-brand-purple">2.800 hrs</span>
+                        <span class="text-xs text-slate-400 block mt-0.5">exercitadas no app</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto w-full flex-grow flex flex-col justify-center">
+        <div id="canvas-board" class="canvas-grid grid grid-cols-1 md:grid-cols-5 gap-4 h-auto md:min-h-[680px] w-full transition-all duration-300">
+            
+            <div id="step-1" class="print-card md:col-span-1 md:row-span-2 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 group theme-transition">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Problema
+                        </h3>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 1</span>
+                    </div>
+                    <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Quais dores seu cliente enfrenta?</span>
+                    
+                    <div id="content-problema" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-4">
+                        </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-400 dark:text-slate-500">
+                    <strong class="text-slate-500 dark:text-slate-400">Alternativas do mercado:</strong> Aulas expositivas teóricas, vídeos no TikTok e contas digitais financeiras para menores sem cunho educacional.
+                </div>
+            </div>
+
+            <div class="md:col-span-1 md:row-span-2 flex flex-col gap-4">
+                
+                <div id="step-2" class="print-card flex-1 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-brand-green"></i> Solução
+                            </h3>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 2</span>
+                        </div>
+                        <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Recursos que resolvem o problema</span>
+                        
+                        <div id="content-solucao" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-3">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="step-8" class="print-card flex-1 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-blue-500"></i> Métricas Chave
+                            </h3>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 8</span>
+                        </div>
+                        <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Indicadores de sucesso e engajamento</span>
+                        
+                        <div id="content-metricas" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-3">
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step-3" class="print-card md:col-span-1 md:row-span-2 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition border-l-4 border-l-brand-purple">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-gem text-brand-purple"></i> Proposta de Valor
+                        </h3>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 3</span>
+                    </div>
+                    <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Sua mensagem principal de venda</span>
+                    
+                    <div id="content-proposta" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-base text-slate-700 dark:text-slate-200 font-semibold space-y-4">
+                        </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-400 dark:text-slate-500">
+                    <strong class="text-slate-500 dark:text-slate-400">Diferencial Exclusivo:</strong> Simulação prática de decisões de forma assistida por Inteligência Artificial escolar.
+                </div>
+            </div>
+
+            <div class="md:col-span-1 md:row-span-2 flex flex-col gap-4">
+                
+                <div id="step-9" class="print-card flex-1 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-bolt text-amber-500"></i> Vantagem Injusta
+                            </h3>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 9</span>
+                        </div>
+                        <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">O que os outros não podem copiar?</span>
+                        
+                        <div id="content-vantagem" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-3">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="step-4" class="print-card flex-1 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-truck-ramp-box text-cyan-500"></i> Canais
+                            </h3>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 4</span>
+                        </div>
+                        <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Como entregamos valor ao cliente?</span>
+                        
+                        <div id="content-canais" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-3">
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step-5" class="print-card md:col-span-1 md:row-span-2 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-users text-teal-500"></i> Segmento
+                        </h3>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 5</span>
+                    </div>
+                    <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Quem são os clientes importantes?</span>
+                    
+                    <div id="content-segmento" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-4">
+                        </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-400 dark:text-slate-500">
+                    <strong class="text-slate-500 dark:text-slate-400">Early Adopters:</strong> Escolas privadas de Salvador e colégios estaduais buscando inovação técnica.
+                </div>
+            </div>
+
+            <div id="step-6" class="print-card md:col-span-2 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calculator text-rose-500"></i> Estrutura de Custos
+                        </h3>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 6</span>
+                    </div>
+                    <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Quais são as despesas de operação?</span>
+                    
+                    <div id="content-custos" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-3">
+                        </div>
+                </div>
+            </div>
+
+            <div id="step-7" class="print-card md:col-span-3 bg-white dark:bg-brand-cardDark border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 theme-transition">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-title font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sack-dollar text-brand-green"></i> Fluxos de Receita
+                        </h3>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-600">Bloco 7</span>
+                    </div>
+                    <span class="block text-xs text-slate-400 dark:text-slate-500 mb-4 font-medium italic">Como o negócio gera receita recorrente?</span>
+                    
+                    <div id="content-receita" contenteditable="true" class="outline-none focus:ring-2 focus:ring-brand-purple/40 rounded-lg p-1 text-sm text-slate-600 dark:text-slate-300 space-y-3">
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800/80 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 dark:text-slate-500 gap-2 max-w-7xl mx-auto w-full">
+        <div>
+            Desenvolvido por: <strong>Túlio Augustus</strong><b>
+            Equipe: Cauã, Djavan, Rian Victor, Túlio Augustus e Evelin Brasil
+        </div>
+        <div class="flex items-center gap-4">
+            <span>Disciplina: MAT220 - Empreendedores em Informática</span>
+            <span>Docente: Laise Cavalcante</span>
+        </div>
+    </footer>
+
+    <script>
+        // Dados originais acadêmicos polidos com apelo comercial
+        const originalData = {
+            problema: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-500 mt-1"></i> Descontrole Financeiro Real: <span class="font-normal text-slate-600 dark:text-slate-300">Nossa pesquisa de campo apontou que a imensa maioria dos adolescentes brasileiros não possui qualquer controle de gastos diários.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-basket-shopping text-rose-500 mt-1"></i> Gasto Impulsivo Crônico: <span class="font-normal text-slate-600 dark:text-slate-300">Alta taxa de arrependimento relatada pelos alunos por compras desnecessárias.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-graduation-cap text-rose-500 mt-1"></i> Falha de Engajamento: <span class="font-normal text-slate-600 dark:text-slate-300">O modelo pedagógico tradicional é puramente focado em cartilhas teóricas, repelindo a atenção dos adolescentes de forma crônica.</span></p>
+            `,
+            solucao: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-wallet text-brand-green mt-1"></i> Prática com Dinheiro Fictício: <span class="font-normal text-slate-600 dark:text-slate-300">Carteira virtual e simuladores de investimentos tradicionais e cripto sem riscos financeiros.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-gamepad text-brand-green mt-1"></i> Gamificação de Alto Nível: <span class="font-normal text-slate-600 dark:text-slate-300">Mecânicas nativas de desafios diários com recompensas, ranking escolar e loja integrada para motivar o acesso contínuo.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-brain text-brand-green mt-1"></i> Inteligência Artificial Proativa: <span class="font-normal text-slate-600 dark:text-slate-300">Tutor de IA que ajuda de forma personalizada a entender os erros cometidos nos simuladores de mercado.</span></p>
+            `,
+            metricas: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-circle-dot text-blue-500 mt-1"></i> Acessos Ativos (DAU): <span class="font-normal text-slate-600 dark:text-slate-300">Frequência de abertura diária do app pelos estudantes e conclusão das missões diárias.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-award text-blue-500 mt-1"></i> Desempenho nos Quizzes: <span class="font-normal text-slate-600 dark:text-slate-300">Taxa de evolução e retenção de conceitos testada nos módulos educativos integrados.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-rotate text-blue-500 mt-1"></i> Renovação das Escolas: <span class="font-normal text-slate-600 dark:text-slate-300">Taxa de renovação anual dos contratos do plano SaaS ou editais de inovação.</span></p>
+            `,
+            proposta: `
+                <p class="text-brand-purple dark:text-purple-300 font-bold text-lg leading-relaxed">
+                    "O primeiro sistema de treinamento financeiro gamificado e simulado projetado especificamente para a Geração Z que ajuda escolas a cumprirem a grade obrigatória da BNCC, conectando pais e professores através de IA."
+                </p>
+            `,
+            vantagem: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-school text-amber-500 mt-1"></i> Amparo Científico UFBA: <span class="font-normal text-slate-600 dark:text-slate-300">Validação teórica e pesquisa qualitativa realizada diretamente pelo grupo no mercado local de Salvador.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-robot text-amber-500 mt-1"></i> IA Ativa de Erro: <span class="font-normal text-slate-600 dark:text-slate-300">Sistema que prevê, analisa e alerta os desvios de consumo nas simulações com linguagem adequada ao estudante.</span></p>
+            `,
+            canais: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-file-contract text-cyan-500 mt-1"></i> Editais e Licitações (B2G): <span class="font-normal text-slate-600 dark:text-slate-300">Parcerias estruturadas diretamente com Secretarias Estaduais de Educação.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-building-columns text-cyan-500 mt-1"></i> Comercial Direto (B2B): <span class="font-normal text-slate-600 dark:text-slate-300">Equipes de vendas com foco em direções de escolas particulares de ensino médio.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-mobile-screen text-cyan-500 mt-1"></i> App Stores Nativo: <span class="font-normal text-slate-600 dark:text-slate-300">Download direto e facilitado pelos próprios alunos na Google Play e App Store.</span></p>
+            `,
+            segmento: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-landmark text-teal-500 mt-1"></i> Clientes Pagantes: <span class="font-normal text-slate-600 dark:text-slate-300">Gestores públicos e diretores de escolas privadas de Ensino Médio que necessitam de novos recursos educacionais práticos.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-child text-teal-500 mt-1"></i> Usuários Finais: <span class="font-normal text-slate-600 dark:text-slate-300">Adolescentes de 14 a 18 anos sedentos por novas tecnologias e games interativos no smartphone.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-people-roof text-teal-500 mt-1"></i> Co-Validadores: <span class="font-normal text-slate-600 dark:text-slate-300">Pais e responsáveis interessados no letramento econômico e relatórios do progresso de seus filhos.</span></p>
+            `,
+            custos: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-server text-rose-500 mt-1"></i> Tecnologia e APIs: <span class="font-normal text-slate-600 dark:text-slate-300">Hospedagem em nuvem de servidores e tokens para consultas e interações da IA.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-code text-rose-500 mt-1"></i> Desenvolvimento Contínuo: <span class="font-normal text-slate-600 dark:text-slate-300">Manutenção periódica, melhorias no software e suporte de 1 ano grátis para redes públicas contratadas.</span></p>
+            `,
+            receita: `
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-shield-halved text-brand-green mt-1"></i> Licenciamento Escolar SaaS: <span class="font-normal text-slate-600 dark:text-slate-300">Cobrança recorrente de anuidade das escolas privadas proporcional à quantidade de licenças de alunos.</span></p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-gavel text-brand-green mt-1"></i> Editais e Convênios Públicos: <span class="font-normal text-slate-600 dark:text-slate-300">Contratos de faturamento massivos aprovados em licitações e editais governamentais estaduais.</span></p>
+            `
+        };
+
+        // Perspectivas comerciais focadas para os botões do pitch
+        const perspectives = {
+            b2b: {
+                badge: "Foco: Escolas Privadas (B2B)",
+                problema: `
+                    <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-school-circle-exclamation text-rose-500 mt-1"></i> Diferencial de Concorrência: <span class="font-normal text-slate-600 dark:text-slate-300">As escolas privadas precisam provar inovação frente à concorrência local para atrair e reter matrículas.</span></p>
+                    <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-arrows-to-eye text-rose-500 mt-1"></i> Demanda das Famílias: <span class="font-normal text-slate-600 dark:text-slate-300">Pais exigem projetos interativos e modernos que preparem os filhos para desafios reais, cansados de aulas 100% expositivas.</span></p>
+                `,
+                proposta: `
+                    <p class="text-brand-purple dark:text-purple-300 font-bold text-lg leading-relaxed">
+                        "O diferencial mercadológico de inovação definitivo para o seu colégio privado: letramento financeiro prático, que reduz arrependimento de gastos impulsivos e conecta o progresso dos jovens diretamente com os pais."
+                    </p>
+                `,
+                receita: `
+                    <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-key text-brand-green mt-1"></i> Licenciamento SaaS Anual: <span class="font-normal text-slate-600 dark:text-slate-300">R$ 5 a R$ 12 por estudante ativo/mês contratado e faturado anualmente de forma recorrente pela escola como serviço de tecnologia.</span></p>
+                `
+            },
+            b2g: {
+                badge: "Foco: Secretarias Estaduais (B2G)",
+                problema: `
+                    <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-landmark text-rose-500 mt-1"></i> Implementação da BNCC: <span class="font-normal text-slate-600 dark:text-slate-300">Dificuldade crônica em colocar em prática a grade de finanças pessoais do Novo Ensino Médio de forma escalável em toda a rede.</span></p>
+                    <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-server-slash text-rose-500 mt-1"></i> Orçamento Técnico Limitado: <span class="font-normal text-slate-600 dark:text-slate-300">Falta de preparo técnico interno para manter aplicativos complexos e IA de forma autônoma.</span></p>
+                `,
+                proposta: `
+                    <p class="text-brand-purple dark:text-purple-300 font-bold text-lg leading-relaxed">
+                        "A solução de inclusão social em escala para a Bahia: Tecnologia gamificada de baixíssimo custo por aluno para fomento do ensino financeiro em redes estaduais, fornecendo suporte técnico gratuito por 1 ano."
+                    </p>
+                `,
+                receita: `
+                    <p class="font-semibold text-slate-800 dark:text-slate-100 flex items-start gap-2"><i class="fa-solid fa-gavel text-brand-green mt-1"></i> Contratos de Editais Estaduais: <span class="font-normal text-slate-600 dark:text-slate-300">Vendas massivas por lotes estaduais de fomento à educação pública, financiadas por fundos de desenvolvimento tecnológico educacional.</span></p>
+                `
+            }
+        };
+
+        // Configuração lógica de passos para o Pitch de Vendas
+        const pitchOrder = ["step-1", "step-5", "step-3", "step-2", "step-4", "step-7", "step-6", "step-8", "step-9"];
+        const stepLabels = [
+            "1 / 9: O Problema Real do Aluno",
+            "2 / 9: Nosso Segmento e Early Adopters",
+            "3 / 9: Nossa Proposta Única de Valor",
+            "4 / 9: A Solução Pedagógica do App",
+            "5 / 9: Nossos Canais de Entrada",
+            "6 / 9: Estrutura Comercial de Receitas",
+            "7 / 9: Viabilidade de Custos Técnicos",
+            "8 / 9: Métricas Chave de Sucesso",
+            "9 / 9: Vantagem Competitiva Injusta"
+        ];
+        let currentPitchIndex = 0;
+        let isPitchModeActive = false;
+
+        // Injetar dados originais como padrão
+        function loadOriginalData() {
+            document.getElementById('content-problema').innerHTML = originalData.problema;
+            document.getElementById('content-solucao').innerHTML = originalData.solucao;
+            document.getElementById('content-metricas').innerHTML = originalData.metricas;
+            document.getElementById('content-proposta').innerHTML = originalData.proposta;
+            document.getElementById('content-vantagem').innerHTML = originalData.vantagem;
+            document.getElementById('content-canais').innerHTML = originalData.canais;
+            document.getElementById('content-segmento').innerHTML = originalData.segmento;
+            document.getElementById('content-custos').innerHTML = originalData.custos;
+            document.getElementById('content-receita').innerHTML = originalData.receita;
+            
+            document.getElementById('perspective-badge').textContent = "Foco: Geral";
+        }
+
+        // Alterar perspectiva do Canvas
+        function setPerspective(type) {
+            document.getElementById('btn-p-all').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+            document.getElementById('btn-p-b2b').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+            document.getElementById('btn-p-b2g').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+            
+            loadOriginalData();
+
+            if (type === 'all') {
+                document.getElementById('btn-p-all').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm";
+            } else {
+                document.getElementById('btn-p-' + type).className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm";
+                
+                // Aplicar customizações
+                document.getElementById('perspective-badge').textContent = perspectives[type].badge;
+                document.getElementById('content-problema').innerHTML = perspectives[type].problema;
+                document.getElementById('content-proposta').innerHTML = perspectives[type].proposta;
+                document.getElementById('content-receita').innerHTML = perspectives[type].receita;
+            }
+        }
+
+        // Simulação do cálculo de engajamento
+        function calculateImpact() {
+            const inputVal = parseInt(document.getElementById('input-students').value) || 0;
+            const engaged = Math.round(inputVal * 0.9);
+            const hours = Math.round(engaged * 8); // estimativa de 8h de prática anual/estudante engajado
+            
+            document.getElementById('val-engaged').textContent = engaged.toLocaleString('pt-BR');
+            document.getElementById('val-hours').textContent = hours.toLocaleString('pt-BR') + " hrs";
+        }
+
+        // Lógica do Modo de Apresentação (Pitch Mode)
+        function togglePitchMode() {
+            isPitchModeActive = true;
+            document.getElementById('pitch-controls').classList.remove('hidden');
+            document.getElementById('pitch-overlay').classList.remove('hidden');
+            document.getElementById('pitch-overlay').classList.add('opacity-100');
+            
+            currentPitchIndex = 0;
+            highlightPitchStep();
+        }
+
+        function highlightPitchStep() {
+            pitchOrder.forEach(id => {
+                const element = document.getElementById(id);
+                element.classList.remove('pitch-highlight');
+                element.style.opacity = "0.15";
+            });
+
+            const activeId = pitchOrder[currentPitchIndex];
+            const activeElement = document.getElementById(activeId);
+            activeElement.classList.add('pitch-highlight');
+            activeElement.style.opacity = "1";
+            activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            document.getElementById('pitch-step-indicator').textContent = stepLabels[currentPitchIndex];
+        }
+
+        function nextPitchStep() {
+            if (currentPitchIndex < pitchOrder.length - 1) {
+                currentPitchIndex++;
+                highlightPitchStep();
+            } else {
+                exitPitchMode();
+            }
+        }
+
+        function prevPitchStep() {
+            if (currentPitchIndex > 0) {
+                currentPitchIndex--;
+                highlightPitchStep();
+            }
+        }
+
+        function exitPitchMode() {
+            isPitchModeActive = false;
+            document.getElementById('pitch-controls').classList.add('hidden');
+            document.getElementById('pitch-overlay').classList.add('opacity-0');
+            setTimeout(() => {
+                document.getElementById('pitch-overlay').classList.add('hidden');
+            }, 300);
+
+            pitchOrder.forEach(id => {
+                const element = document.getElementById(id);
+                element.classList.remove('pitch-highlight');
+                element.style.opacity = "1";
+            });
+        }
+
+        // Mapear Setas do Teclado para Navegar no Pitch
+        document.addEventListener('keydown', function(event) {
+            if (!isPitchModeActive) return;
+            if (event.key === 'ArrowRight' || event.key === 'Space') {
+                event.preventDefault();
+                nextPitchStep();
+            } else if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                prevPitchStep();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                exitPitchMode();
+            }
+        });
+
+        // Alternar Tema Escuro / Claro
+        function toggleTheme() {
+            const htmlElement = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-moon';
+                themeText.textContent = 'Modo Escuro';
+            } else {
+                htmlElement.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-sun';
+                themeText.textContent = 'Modo Claro';
+            }
+        }
+
+        // Configuração inicial no load da página
+        window.onload = function() {
+            document.documentElement.classList.add('dark');
+            loadOriginalData();
+            calculateImpact();
+        }
+    </script>
+</body>
+</html>
